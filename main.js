@@ -1,5 +1,6 @@
 var path = Npm.require('path')
 var fs = Npm.require('fs-extra')
+var semver = Npm.require('semver')
 
 log = loglevel.createPackageLogger('[sanjo:karma]', process.env.KARMA_LOG_LEVEL || 'info')
 
@@ -105,9 +106,14 @@ KarmaInternals = {
 
   getKarmaPath: function () {
     // TODO: Use sanjo:assets-path-resolver when available
+    var meteorVersion = MeteorVersion.getSemanticVersion();
+    var karmaPath = (meteorVersion && PackageVersion.lessThan(meteorVersion, '1.0.4')) ?
+      '.meteor/local/build/programs/server/npm/sanjo:karma/node_modules/karma/bin/karma' :
+      '.meteor/local/build/programs/server/npm/sanjo_karma/node_modules/karma/bin/karma'
+
     return path.join(
       KarmaInternals.getAppPath(),
-      '.meteor/local/build/programs/server/npm/sanjo:karma/node_modules/karma/bin/karma'
+      karmaPath
     )
   }
 }

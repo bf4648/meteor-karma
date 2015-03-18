@@ -17,11 +17,13 @@ Npm.depends({
 })
 
 Package.onUse(function (api) {
-  api.versionsFrom('1.0')
+  api.versionsFrom('1.0.3.2')
   api.use('coffeescript', 'server')
   api.use('underscore', 'server')
   api.use('check', 'server')
   api.use('practicalmeteor:loglevel@1.1.0_2', 'server')
+  api.use('sanjo:meteor-version@1.0.0', 'server')
+  api.use('package-version-parser', 'server')
 
   api.addFiles([
     'lib/meteor/files.js',
