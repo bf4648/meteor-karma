@@ -141,7 +141,7 @@ class sanjo.LongRunningChildProcess
 
     nodePath = process.execPath
     nodeDir = path.dirname(nodePath)
-    env = _.extend({
+    env = _.defaults({
       # Expose the Meteor node binary path for the script that is run
       PATH: nodeDir + ':' + process.env.PATH
     }, process.env)
