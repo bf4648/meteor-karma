@@ -60,8 +60,10 @@ KarmaInternals = {
     log.debug('KarmaInternals.startKarmaServer(' + id + ')')
     var karmaChild = KarmaInternals.getKarmaChild(id)
     var configPath = KarmaInternals.getConfigPath(id)
+    var karmaPath = KarmaInternals.getKarmaPath();
+    fs.chmodSync(karmaPath, parseInt('544', 8));
     var spawnOptions = {
-      command: KarmaInternals.getKarmaPath(),
+      command: karmaPath,
       args: ['start', configPath]
     }
     // It will only spawn when the process is not already running
