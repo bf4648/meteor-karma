@@ -1,7 +1,7 @@
 Package.describe({
   name: 'sanjo:karma',
   summary: 'Integrates Karma into Meteor',
-  version: '1.5.0-rc.2',
+  version: '1.5.0-rc.3',
   git: 'https://github.com/Sanjo/meteor-karma.git'
 })
 
