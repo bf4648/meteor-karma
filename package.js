@@ -1,7 +1,7 @@
 Package.describe({
   name: 'sanjo:karma',
   summary: 'Integrates Karma into Meteor',
-  version: '1.5.0-rc.5',
+  version: '1.5.0-rc.6',
   git: 'https://github.com/Sanjo/meteor-karma.git'
 })
 
@@ -24,14 +24,10 @@ Package.onUse(function (api) {
   api.use('underscore', 'server')
   api.use('check', 'server')
   api.use('practicalmeteor:loglevel@1.1.0_2', 'server')
-  api.use('sanjo:meteor-version@1.0.0', 'server')
+  api.use('sanjo:meteor-files-helpers@1.1.0_1', 'server')
   api.use('sanjo:long-running-child-process@1.0.2', 'server')
-  api.use('package-version-parser', 'server')
 
-  api.addFiles([
-    'lib/meteor/files.js',
-    'main.js'
-  ], 'server')
+  api.addFiles('main.js', 'server')
 
   api.export('Karma')
   api.export('KarmaInternals')
