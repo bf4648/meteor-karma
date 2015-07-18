@@ -10,6 +10,7 @@ Npm.depends({
   'karma-chrome-launcher': '0.2.0',
   'karma-firefox-launcher': '0.1.6',
   'karma-jasmine': '0.3.6',
+  'karma-babel-preprocessor': '5.2.1',
   'karma-coffee-preprocessor': '0.3.0',
   'karma-phantomjs-launcher': '0.2.0',
   'karma-sauce-launcher': '0.2.14',
