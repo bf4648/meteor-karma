@@ -6,8 +6,6 @@ Package.describe({
 })
 
 Npm.depends({
-  // TODO: Remove chokidar as dependency when 1.0.0 is released
-  'chokidar': '0.12.6', // Force to not use the release candidate version
   'karma': '0.12.31',
   'karma-chrome-launcher': '0.1.7',
   'karma-firefox-launcher': '0.1.4',
