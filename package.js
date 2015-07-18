@@ -6,13 +6,13 @@ Package.describe({
 })
 
 Npm.depends({
-  'karma': '0.12.31',
-  'karma-chrome-launcher': '0.1.7',
-  'karma-firefox-launcher': '0.1.4',
-  'karma-jasmine': '0.3.5',
-  'karma-coffee-preprocessor': '0.2.1',
-  'karma-phantomjs-launcher': '0.1.4',
-  'karma-sauce-launcher': '0.2.10',
+  'karma': '0.13.2',
+  'karma-chrome-launcher': '0.2.0',
+  'karma-firefox-launcher': '0.1.6',
+  'karma-jasmine': '0.3.6',
+  'karma-coffee-preprocessor': '0.3.0',
+  'karma-phantomjs-launcher': '0.2.0',
+  'karma-sauce-launcher': '0.2.14',
   'fs-extra': '0.12.0'
 })
 
