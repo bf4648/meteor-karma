@@ -1,12 +1,12 @@
 Package.describe({
   name: 'sanjo:karma',
   summary: 'Integrates Karma into Meteor',
-  version: '1.6.0',
+  version: '1.6.1',
   git: 'https://github.com/Sanjo/meteor-karma.git'
 })
 
 Npm.depends({
-  'karma': '0.13.2',
+  'karma': '0.13.3',
   'karma-chrome-launcher': '0.2.0',
   'karma-firefox-launcher': '0.1.6',
   'karma-jasmine': '0.3.6',
@@ -30,10 +30,4 @@ Package.onUse(function (api) {
 
   api.export('Karma')
   api.export('KarmaInternals')
-})
-
-Package.onTest(function(api){
-  api.use('spacejamio:munit')
-  api.use('sanjo:karma')
-  api.addFiles(['specs/karma.js'], 'server')
 })
