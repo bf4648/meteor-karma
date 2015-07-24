@@ -18,13 +18,10 @@ Npm.depends({
 })
 
 Package.onUse(function (api) {
-  api.versionsFrom('1.0.3.2')
-  api.use('coffeescript', 'server')
-  api.use('underscore', 'server')
-  api.use('check', 'server')
-  api.use('practicalmeteor:loglevel@1.1.0_2', 'server')
-  api.use('sanjo:meteor-files-helpers@1.1.0_2', 'server')
-  api.use('sanjo:long-running-child-process@1.0.2', 'server')
+  api.versionsFrom('1.1.0.2')
+  api.use('practicalmeteor:loglevel@1.1.0_3', 'server')
+  api.use('sanjo:meteor-files-helpers@1.1.0_6', 'server')
+  api.use('sanjo:long-running-child-process@1.1.1', 'server')
 
   api.addFiles('main.js', 'server')
 
