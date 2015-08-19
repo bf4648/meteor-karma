@@ -35,6 +35,10 @@ Karma = {
     } else {
       log.debug('New config is exactly the same as the old one.')
     }
+  },
+
+  getConfigPath: function (id) {
+    return KarmaInternals.getConfigPath(id);
   }
 }
 
@@ -97,7 +101,7 @@ KarmaInternals = {
   getConfigPath: function (id) {
     return path.join(
       MeteorFilesHelpers.getAppPath(),
-      '.meteor/local/karma/' + id + '.config.js'
+      '.meteor/local/karma/' + id + '/config.js'
     )
   },
 
