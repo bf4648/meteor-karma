@@ -6,7 +6,8 @@ Package.describe({
 })
 
 Npm.depends({
-  'karma': '0.13.3',
+  // 0.13.9 + custom context.html and debug.html option
+  'karma': 'https://github.com/Sanjo/karma/archive/1e843773b61f650223bd349cb48579418dd561f4.tar.gz',
   'karma-chrome-launcher': '0.2.0',
   'karma-firefox-launcher': '0.1.6',
   'karma-jasmine': '0.3.6',
