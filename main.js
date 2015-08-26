@@ -8,33 +8,55 @@ Karma = {
     options = options || {}
     log.debug('Karma.start', id)
 
-    Karma.setConfig(id, options)
-
-    return KarmaInternals.startKarmaServer(id, options)
+    return Karma.restartWithConfig(id, options)
   },
 
-  setConfig: function (id, options) {
-    log.debug('Karma.setConfig', id)
+  isRunning: function (id) {
+    var karmaChild = KarmaInternals.getKarmaChild(id)
+    return karmaChild.isRunning();
+  },
 
+  stop: function (id) {
+    var karmaChild = KarmaInternals.getKarmaChild(id)
+    if (karmaChild.isRunning()) {
+      log.debug('Stopping Karma server.')
+      karmaChild.kill()
+    }
+  },
+
+  restartWithConfig: function (id, options) {
+    log.debug('Karma.restartWithConfig', id)
+    
     var oldConfig = KarmaInternals.readKarmaConfig(id)
     var newConfig = KarmaInternals.generateKarmaConfig(options)
 
-    if (!oldConfig || newConfig !== oldConfig) {
+    var cfgDiff = (!oldConfig || newConfig !== oldConfig);
+    
+    var karmaChild = KarmaInternals.getKarmaChild(id)
+    var wasRunning = karmaChild.isRunning();
+
+    // (re)start running Karma server when config has changed
+    if (cfgDiff) {
       log.debug('New config is different from the old one.')
       log.debug(oldConfig)
       log.debug(newConfig)
+
+      log.debug('Restarting Karma server to reload config.')
+      if (wasRunning)
+        karmaChild.kill()
+
       KarmaInternals.writeKarmaConfig(id, newConfig)
 
-      // Restart running Karma server when config has changed
-      var karmaChild = KarmaInternals.getKarmaChild(id)
-      if (karmaChild.isRunning()) {
-        log.debug('Restarting Karma server to reload config.')
-        karmaChild.kill()
-        KarmaInternals.startKarmaServer(id)
-      }
     } else {
       log.debug('New config is exactly the same as the old one.')
     }
+
+    // start the server if it was killed due to config update
+    // or if it's a first start (with unchanged config)
+    if (!wasRunning || cfgDiff)
+      return KarmaInternals.startKarmaServer(id);
+    else
+      return karmaChild;
   },
 
   getConfigPath: function (id) {
