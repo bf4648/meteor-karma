@@ -7,7 +7,7 @@ meteor@1.1.6
 package-version-parser@3.0.3
 practicalmeteor:chai@1.9.2_3
 practicalmeteor:loglevel@1.1.0_3
-sanjo:karma@1.7.0
+sanjo:karma@2.0.0
 sanjo:long-running-child-process@1.1.1
 sanjo:meteor-files-helpers@1.1.0_6
 sanjo:meteor-version@1.0.0

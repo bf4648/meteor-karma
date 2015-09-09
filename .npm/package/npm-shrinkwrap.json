@@ -1759,7 +1759,7 @@
               "version": "1.0.0"
             },
             "rimraf": {
-              "version": "2.4.2",
+              "version": "2.4.3",
               "dependencies": {
                 "glob": {
                   "version": "5.0.14",
