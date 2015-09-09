@@ -13,7 +13,7 @@ Karma = {
 
   isRunning: function (id) {
     var karmaChild = KarmaInternals.getKarmaChild(id)
-    return karmaChild.isRunning();
+    return karmaChild.isRunning()
   },
 
   stop: function (id) {
@@ -26,24 +26,25 @@ Karma = {
 
   restartWithConfig: function (id, options) {
     log.debug('Karma.restartWithConfig', id)
-    
+
     var oldConfig = KarmaInternals.readKarmaConfig(id)
     var newConfig = KarmaInternals.generateKarmaConfig(options)
 
-    var cfgDiff = (!oldConfig || newConfig !== oldConfig);
-    
+    var hasConfigChanged = (!oldConfig || newConfig !== oldConfig)
+
     var karmaChild = KarmaInternals.getKarmaChild(id)
-    var wasRunning = karmaChild.isRunning();
+    var wasRunning = karmaChild.isRunning()
 
     // (re)start running Karma server when config has changed
-    if (cfgDiff) {
+    if (hasConfigChanged) {
       log.debug('New config is different from the old one.')
       log.debug(oldConfig)
       log.debug(newConfig)
 
       log.debug('Restarting Karma server to reload config.')
-      if (wasRunning)
+      if (wasRunning) {
         karmaChild.kill()
+      }
 
       KarmaInternals.writeKarmaConfig(id, newConfig)
 
@@ -53,14 +54,15 @@ Karma = {
 
     // start the server if it was killed due to config update
     // or if it's a first start (with unchanged config)
-    if (!wasRunning || cfgDiff)
-      return KarmaInternals.startKarmaServer(id);
-    else
-      return karmaChild;
+    if (!wasRunning || hasConfigChanged) {
+      return KarmaInternals.startKarmaServer(id)
+    } else {
+      return karmaChild
+    }
   },
 
   getConfigPath: function (id) {
-    return KarmaInternals.getConfigPath(id);
+    return KarmaInternals.getConfigPath(id)
   }
 }
 
@@ -85,8 +87,8 @@ KarmaInternals = {
     log.debug('KarmaInternals.startKarmaServer(' + id + ')')
     var karmaChild = KarmaInternals.getKarmaChild(id)
     var configPath = KarmaInternals.getConfigPath(id)
-    var karmaPath = KarmaInternals.getKarmaPath();
-    fs.chmodSync(karmaPath, parseInt('544', 8));
+    var karmaPath = KarmaInternals.getKarmaPath()
+    fs.chmodSync(karmaPath, parseInt('544', 8))
     var spawnOptions = {
       command: process.execPath,
       args: [karmaPath, 'start', configPath]
@@ -116,7 +118,7 @@ KarmaInternals = {
     try {
       return fs.readFileSync(configPath, {encoding: 'utf8'})
     } catch (error) {
-      return null;
+      return null
     }
   },
 
