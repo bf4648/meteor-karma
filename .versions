@@ -13,7 +13,7 @@ practicalmeteor:chai@1.9.2_3
 practicalmeteor:loglevel@1.1.0_3
 promise@0.4.8
 random@1.0.4
-sanjo:karma@3.0.1
+sanjo:karma@3.0.2
 sanjo:long-running-child-process@1.1.1
 sanjo:meteor-files-helpers@1.2.0_1
 sanjo:meteor-version@1.0.0
