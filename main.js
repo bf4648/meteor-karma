@@ -1,14 +1,23 @@
 var path = Npm.require('path')
 var fs = Npm.require('fs-extra')
+var readFile = Meteor.wrapAsync(fs.readFile, fs)
+var outputFile = Meteor.wrapAsync(fs.outputFile, fs)
+var requestRetry = Npm.require('requestretry')
+var freeport = Meteor.wrapAsync(Npm.require('freeport'))
 
-log = loglevel.createPackageLogger('[sanjo:karma]', process.env.KARMA_LOG_LEVEL || 'info')
+var packageName = 'sanjo:karma';
+
+log = loglevel.createPackageLogger(
+  '[' + packageName + ']',
+  process.env.KARMA_LOG_LEVEL || 'info'
+)
 
 Karma = {
   start: function (id, options) {
     options = options || {}
     log.debug('Karma.start', id)
 
-    return Karma.restartWithConfig(id, options)
+    return KarmaInternals.startKarmaServer(id, options)
   },
 
   isRunning: function (id) {
@@ -17,57 +26,61 @@ Karma = {
   },
 
   stop: function (id) {
+    log.debug('Karma.stop', id)
     var karmaChild = KarmaInternals.getKarmaChild(id)
     if (karmaChild.isRunning()) {
-      log.debug('Stopping Karma server.')
       karmaChild.kill()
     }
   },
 
-  restartWithConfig: function (id, options) {
-    log.debug('Karma.restartWithConfig', id)
-
-    var oldConfig = KarmaInternals.readKarmaConfig(id)
-    var newConfig = KarmaInternals.generateKarmaConfig(options)
-
-    var hasConfigChanged = (!oldConfig || newConfig !== oldConfig)
-
-    var karmaChild = KarmaInternals.getKarmaChild(id)
-    var wasRunning = karmaChild.isRunning()
-
-    // (re)start running Karma server when config has changed
-    if (hasConfigChanged) {
-      log.debug('New config is different from the old one.')
-      log.debug(oldConfig)
-      log.debug(newConfig)
-
-      log.debug('Restarting Karma server to reload config.')
-      if (wasRunning) {
-        karmaChild.kill()
-      }
-
-      KarmaInternals.writeKarmaConfig(id, newConfig)
-
-    } else {
-      log.debug('New config is exactly the same as the old one.')
-    }
-
-    // start the server if it was killed due to config update
-    // or if it's a first start (with unchanged config)
-    if (!wasRunning || hasConfigChanged) {
-      return KarmaInternals.startKarmaServer(id)
-    } else {
-      return karmaChild
-    }
+  run: function (id) {
+    log.debug('Karma.run', id)
+    KarmaInternals.apiRequest(id, 'run')
   },
 
-  getConfigPath: function (id) {
-    return KarmaInternals.getConfigPath(id)
+  reloadFileList: function (id, patterns, excludes) {
+    log.debug('Karma.reloadFileList', id, patterns, excludes)
+
+    KarmaInternals.apiRequest(
+      id,
+      'reloadFileList',
+      {
+        patterns: patterns,
+        excludes: excludes
+      }
+    )
   }
 }
 
 KarmaInternals = {
   karmaChilds: {},
+
+  apiRequest: function (id, type, data) {
+    data = data || {}
+    var karmaChild = KarmaInternals.getKarmaChild(id)
+
+    if (karmaChild.isRunning()) {
+      var request = requestRetry({
+        url: 'http://127.0.0.1:' + this.getPort(id) + '/' + type,
+        method: 'POST',
+        json: true,
+        body: data,
+        maxAttempts: 5,
+        retryDelay: 1000
+      }, function (error, response, body) {
+        if (error) {
+          log.error(type + ' request failed', error)
+        } else if (response.statusCode === 500) {
+          log.error(type + ' request failed', body.data.error)
+        }
+      })
+    } else {
+      throw new Error(
+        'You need to start the Karma server ' +
+        'before you can make an API request.'
+      )
+    }
+  },
 
   getKarmaChild: function (id) {
     var karmaChild = KarmaInternals.karmaChilds[id]
@@ -83,53 +96,46 @@ KarmaInternals = {
     KarmaInternals.karmaChilds[id] = karmaChild
   },
 
-  startKarmaServer: function (id) {
+  startKarmaServer: function (id, options) {
     log.debug('KarmaInternals.startKarmaServer(' + id + ')')
     var karmaChild = KarmaInternals.getKarmaChild(id)
-    var configPath = KarmaInternals.getConfigPath(id)
-    var karmaPath = KarmaInternals.getKarmaPath()
-    fs.chmodSync(karmaPath, parseInt('544', 8))
+    var karmaRunnerPath = KarmaInternals.getKarmaRunnerPath()
+    fs.chmodSync(karmaRunnerPath, parseInt('544', 8))
+    var apiServerPort = this.createPort(id)
     var spawnOptions = {
       command: process.execPath,
-      args: [karmaPath, 'start', configPath]
+      args: [karmaRunnerPath, apiServerPort, this.getKarmaModulePath()]
     }
     // It will only spawn when the process is not already running
     karmaChild.spawn(spawnOptions)
+    KarmaInternals.apiRequest(id, 'start', options)
 
     return karmaChild
   },
 
-  writeKarmaConfig: function (id, config) {
-    var configPath = KarmaInternals.getConfigPath(id)
-    fs.outputFileSync(configPath, config)
-
-    return configPath
-  },
-
-  generateKarmaConfig: function (options) {
-    return 'module.exports = function(config) {\n' +
-      '  config.set(' +
-      JSON.stringify(options, null, 2) +
-      ');\n};'
-  },
-
-  readKarmaConfig: function (id) {
-    var configPath = KarmaInternals.getConfigPath(id)
-    try {
-      return fs.readFileSync(configPath, {encoding: 'utf8'})
-    } catch (error) {
-      return null
-    }
-  },
-
-  getConfigPath: function (id) {
-    return path.join(
-      MeteorFilesHelpers.getAppPath(),
-      '.meteor/local/karma/' + id + '/config.js'
+  getKarmaRunnerPath: function () {
+    return MeteorFilesHelpers.getPackageServerAssetPath(
+      packageName, 'karma_runner.js'
     )
   },
 
-  getKarmaPath: function () {
-    return path.join(MeteorFilesHelpers.getNodeModulePath('sanjo:karma', 'karma'), 'bin', 'karma')
-  }
+  getKarmaModulePath: function () {
+    return MeteorFilesHelpers.getNodeModulePath(packageName, 'karma')
+  },
+
+  getPortFilePath: function (id) {
+    return path.resolve(MeteorFilesHelpers.getAppPath(),
+      '.meteor/local/run/' + id + '.port')
+  },
+
+  createPort: function (id) {
+    var port = freeport()
+    outputFile(this.getPortFilePath(id), port)
+
+    return port
+  },
+
+  getPort: _.memoize(function (id) {
+    return parseInt(readFile(this.getPortFilePath(id), {encoding: 'utf8'}), 10)
+  })
 }

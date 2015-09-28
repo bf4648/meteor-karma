@@ -5,8 +5,10 @@ See [Karma documentation](http://karma-runner.github.io/0.13/index.html) for mor
 ## API
 
 * `Karma.start(id, options)`: Starts a long running Karma server that will close when the Meteor App is closed.
-* `Karma.setConfig(id, options)`: Sets the config for the Karma server. A running Karma server will reload and use the new config.
-* `Karma.getConfigPath(id)`: Returns the absolute path to the Karma config for the given id.
+* `Karma.isRunning(id)`
+* `Karma.stop(id)`
+* `Karma.run(id)`: Starts a Karma test run manually.
+* `Karma.reloadFileList(id, patterns, [excludes]`: Reloads the file list with the new patterns and excludes.
 
 For possible options see [Karma documentation](http://karma-runner.github.io/0.13/config/configuration-file.html).
 
@@ -16,6 +18,10 @@ For possible options see [Karma documentation](http://karma-runner.github.io/0.1
 var options = { ... }
 Karma.start('my-karmer-server', options)
 ```
+
+## Limitations
+
+* Proxies can only be set on the server start (relevant for serving new client assets).
 
 ## License
 
