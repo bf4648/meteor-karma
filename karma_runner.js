@@ -96,7 +96,7 @@ function reloadFileList(options) {
     exclude: options.excludes || []
   })
   var pluginPatterns = server._fileList._patterns.filter(function (pattern) {
-    return pattern.pattern.indexOf('/sanjo_karma/') !== -1
+    return pattern.pattern.indexOf(path.sep + 'sanjo_karma' + path.sep) !== -1
   })
   tempConfig.files.unshift.apply(tempConfig.files, pluginPatterns)
   config.files = tempConfig.files
