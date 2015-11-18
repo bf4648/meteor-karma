@@ -91,6 +91,14 @@ function run() {
 }
 
 function reloadFileList(options) {
+  if (!server) {
+    console.error(
+      'You need to start the server ' +
+      'before you can reload the file list.'
+    )
+    return;
+  }
+
   var tempConfig = parseConfig(null, {
     files: options.patterns || [],
     exclude: options.excludes || []
@@ -106,12 +114,5 @@ function reloadFileList(options) {
     excludes: tempConfig.exclude
   }
   console.log('Karma.reloadFileList', options)
-  if (server) {
-    server._fileList.reload(options.patterns, options.excludes)
-  } else {
-    console.error(
-      'You need to start the server ' +
-      'before you can reload the file list.'
-    )
-  }
+  server._fileList.reload(options.patterns, options.excludes)
 }
