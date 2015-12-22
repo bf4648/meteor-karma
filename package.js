@@ -15,6 +15,7 @@ Npm.depends({
   'karma-coffee-preprocessor': '0.3.0',
   'karma-phantomjs-launcher': '0.2.0',
   'karma-sauce-launcher': '0.2.14',
+  'karma-browserstack-launcher': '0.1.8',
   'fs-extra': '0.22.1',
   'requestretry': '1.5.0',
   'freeport': '1.0.5'
