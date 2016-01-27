@@ -26,7 +26,7 @@ Package.onUse(function (api) {
   api.use('underscore', 'server')
   api.use('practicalmeteor:loglevel@1.1.0_3', 'server')
   api.use('sanjo:meteor-files-helpers@1.2.0_1', 'server')
-  api.use('sanjo:long-running-child-process@1.1.4', 'server')
+  api.use('sanjo:long-running-child-process@1.1.5', 'server')
 
   api.addFiles('main.js', 'server')
   api.addAssets('karma_runner.js', 'server')
