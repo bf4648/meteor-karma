@@ -65,8 +65,8 @@ KarmaInternals = {
         method: 'POST',
         json: true,
         body: data,
-        maxAttempts: 5,
-        retryDelay: 1000
+        maxAttempts: parseInt(process.env.METEOR_KARMA_MAX_ATTEMPTS, 10) || 5,
+        retryDelay: parseInt(process.env.METEOR_KARMA_RETRY_DELAY, 10) || 1000
       }, function (error, response, body) {
         if (error) {
           log.error(type + ' request failed', error)
