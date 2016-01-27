@@ -104,7 +104,12 @@ KarmaInternals = {
     var apiServerPort = this.createPort(id)
     var spawnOptions = {
       command: process.execPath,
-      args: [karmaRunnerPath, apiServerPort, this.getKarmaModulePath()]
+      args: [
+        karmaRunnerPath,
+        apiServerPort,
+        this.getPortFilePath(id),
+        this.getKarmaModulePath()
+      ]
     }
     // It will only spawn when the process is not already running
     karmaChild.spawn(spawnOptions)

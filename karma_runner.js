@@ -1,9 +1,12 @@
 var port = process.argv[2]
-var karmaPath = process.argv[3]
+var portFilePath = process.argv[3]
+var karmaPath = process.argv[4]
 
 var path = require('path')
 var Karma = require(karmaPath)
 var parseConfig = require(path.resolve(karmaPath, 'lib/config')).parseConfig
+
+process.on('SIGINT', shutdown)
 
 var server = null
 var config = null
@@ -77,6 +80,7 @@ function start(options) {
     console.log('Karma.start', config)
     server = new Karma.Server(config, function (exitCode) {
       console.log('Karma has exited with ' + exitCode)
+      shutdown(exitCode)
       process.exit(exitCode)
     })
     server.start()
@@ -88,6 +92,13 @@ function run() {
   runner.run(config, function (exitCode) {
     console.log('Karma run has exited with ' + exitCode)
   })
+}
+
+function shutdown() {
+  try {
+    var fs = require('fs')
+    fs.unlinkSync(portFilePath)
+  } catch (error) {}
 }
 
 function reloadFileList(options) {
